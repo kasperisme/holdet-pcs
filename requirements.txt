@@ -1,3 +1,4 @@
 procyclingstats
 pandas
 openpyxl
+scikit-learn
