@@ -38,7 +38,7 @@ df_riders["selected"] = res.x
 
 print(
     df_riders[df_riders["selected"] == 1][
-        ["name", "selected", "price", "teams_history"]
+        ["name", "price", f"{starting_stage}_potential", "teams_history"]
     ]
 )
 
