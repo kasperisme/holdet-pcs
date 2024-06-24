@@ -47,7 +47,7 @@ def mip_optimize(df_riders: pd.DataFrame, params: dict):
     print("Total cost:", df_riders[df_riders["selected"] == 1]["price"].sum())
 
 
-if __name__ == "__main__":
+def main():
     params = {
         "starting_stage": 0,  # increment as tour progresses
         "capacity": 50000000,  # starts at 50 million
@@ -60,3 +60,7 @@ if __name__ == "__main__":
     df_riders = df_riders.dropna(subset=["price"])
 
     mip_optimize(df_riders, params)
+
+
+if __name__ == "__main__":
+    main()

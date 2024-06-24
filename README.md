@@ -2,6 +2,6 @@
 
 Project on creating the optimal cycling team from pcs data
 
-# HOW TO:
+# How to:
 
 Run the script in sequence based on the number in the file name

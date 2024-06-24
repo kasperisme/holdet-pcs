@@ -1,4 +1,4 @@
-from procyclingstats import Stage, RaceStartlist
+from procyclingstats import Stage
 
 profile_trans_dict = {
     "p1": "Flat",

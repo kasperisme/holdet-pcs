@@ -1,4 +1,4 @@
-from source import stages, riders
+from src import stages, riders
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
@@ -89,8 +89,12 @@ def analysis(df_riders: pd.DataFrame, df_stage: pd.DataFrame):
     return df_riders
 
 
-if __name__ == "__main__":
+def main():
     df_stages = stage_loader()
     df_riders = rider_loader()
 
     df_riders_potential = analysis(df_riders, df_stages)
+
+
+if __name__ == "__main__":
+    main()

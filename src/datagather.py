@@ -49,8 +49,12 @@ def merge_df(price: pd.DataFrame, riders: pd.DataFrame):
     return riders_budget
 
 
-if __name__ == "__main__":
+def main():
     price = pd.read_excel("output/holdet.xlsx")
     riders = pd.read_excel("output/riders_stagepotential_analysis.xlsx")
 
     merge_df(price, riders)
+
+
+if __name__ == "__main__":
+    main()
