@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import os
 
 
 def loader(page: str):
@@ -22,14 +23,14 @@ def loader(page: str):
     return values
 
 
-def main():
+def main(outputpath: str = "output"):
     values = []
     for i in range(0, 6):
         values.extend(loader(i))
 
     df = pd.DataFrame(values, columns=["name", "price"])
 
-    df.to_excel("output/holdet.xlsx")
+    df.to_excel(os.path.join(outputpath, "holdet.xlsx"))
 
     return df
 

@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import optimize
 import pandas as pd
+import os
 
 
 def mip_optimize(df_riders: pd.DataFrame, params: dict):
@@ -47,15 +48,21 @@ def mip_optimize(df_riders: pd.DataFrame, params: dict):
     print("Total cost:", df_riders[df_riders["selected"] == 1]["price"].sum())
 
 
-def main():
+def main(
+    starting_stage: int = 0,
+    capacity: int = 50000000,
+    max_riders: int = 8,
+    depreciation_factor: float = 0.5,
+    read_path: str = "output",
+):
     params = {
-        "starting_stage": 0,  # increment as tour progresses
-        "capacity": 50000000,  # starts at 50 million
-        "max_riders": 8,  # limitation of riders
-        "depreciation_factor": 0.5,  # depreciation for each stage, the higher the factor the more important is the next stages
+        "starting_stage": starting_stage,  # increment as tour progresses
+        "capacity": capacity,  # starts at 50 million
+        "max_riders": max_riders,  # limitation of riders
+        "depreciation_factor": depreciation_factor,  # depreciation for each stage, the higher the factor the more important is the next stages
     }
 
-    df_riders = pd.read_excel("output/riders_budget.xlsx")
+    df_riders = pd.read_excel(os.path.join(read_path, "riders_budget.xlsx"))
 
     df_riders = df_riders.dropna(subset=["price"])
 

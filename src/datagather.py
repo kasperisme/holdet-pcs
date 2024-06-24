@@ -1,7 +1,8 @@
 import pandas as pd
+import os
 
 
-def merge_df(price: pd.DataFrame, riders: pd.DataFrame):
+def merge_df(price: pd.DataFrame, riders: pd.DataFrame, outputpath: str = "output"):
 
     # Cleaning names
     price["name"] = price["name"].apply(lambda x: x.title())
@@ -44,16 +45,18 @@ def merge_df(price: pd.DataFrame, riders: pd.DataFrame):
     riders_budget = riders.merge(price, how="left", left_on="name", right_on="name")
 
     # Save
-    riders_budget.to_excel("output/riders_budget.xlsx")
+    riders_budget.to_excel(os.path.join(outputpath, "riders_budget.xlsx"))
 
     return riders_budget
 
 
-def main():
-    price = pd.read_excel("output/holdet.xlsx")
-    riders = pd.read_excel("output/riders_stagepotential_analysis.xlsx")
+def main(outputpath: str = "output", readpath: str = "output"):
+    price = pd.read_excel(os.path.join(readpath, "holdet.xlsx"))
+    riders = pd.read_excel(
+        os.path.join(readpath, "riders_stagepotential_analysis.xlsx")
+    )
 
-    merge_df(price, riders)
+    merge_df(price, riders, outputpath)
 
 
 if __name__ == "__main__":
