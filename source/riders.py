@@ -13,6 +13,9 @@ def get_riders_dict(race: str):
 
     riders = []
     for i in startlist_dict["startlist"]:
-        riders.append(get_rider_stats(i["rider_url"]))
+        try:
+            riders.append(get_rider_stats(i["rider_url"]))
+        except:
+            print(f"Error with rider {i['rider_url']}")
 
     return riders
