@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import os
+from . import holdet_stats as hs
 
 
 def loader(page: str):
@@ -18,17 +19,21 @@ def loader(page: str):
     )
     d = r.json()
 
-    values = [[i["Values"][2], i["Values"][16]] for i in d["Dataset"]["Items"]]
+    values = [[i["Id"], i["Values"][2], i["Values"][16]] for i in d["Dataset"]["Items"]]
 
     return values
 
 
-def main(outputpath: str = "output"):
+def main(outputpath: str = "output", round: int = 0):
     values = []
     for i in range(0, 6):
         values.extend(loader(i))
 
-    df = pd.DataFrame(values, columns=["name", "price"])
+    df = pd.DataFrame(values, columns=["id", "name", "price"])
+
+    df_hs = hs.main(round=round)
+
+    df = pd.merge(df, df_hs, left_on="id", right_on="player_id")
 
     df.to_excel(os.path.join(outputpath, "holdet.xlsx"))
 
@@ -36,4 +41,4 @@ def main(outputpath: str = "output"):
 
 
 if __name__ == "__main__":
-    main()
+    main(round=4)

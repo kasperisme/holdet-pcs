@@ -78,10 +78,21 @@ def analysis(
 
     cols = ["one_day_races", "gc", "time_trial", "sprint", "climber"]
 
+    df_riders["sum"] = df_riders[cols].sum(axis=1)
+
+    df_riders["one_day_races"] = df_riders["one_day_races"] / df_riders["sum"]
+    df_riders["gc"] = df_riders["gc"] / df_riders["sum"]
+    df_riders["time_trial"] = df_riders["time_trial"] / df_riders["sum"]
+    df_riders["sprint"] = df_riders["sprint"] / df_riders["sum"]
+    df_riders["climber"] = df_riders["climber"] / df_riders["sum"]
+
     df_riders[cols] = scaler.fit_transform(df_riders[cols].to_numpy())
 
     for index, stage in df_stage.iterrows():
         df_riders[str(index) + "_potential"] = potential(df_riders, stage)
+        df_riders[str(index) + "_potential"] = scaler.fit_transform(
+            df_riders[str(index) + "_potential"].to_numpy().reshape(-1, 1)
+        )
 
     df_riders.to_excel(os.path.join(outputpath, "riders_stagepotential_analysis.xlsx"))
 
