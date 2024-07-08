@@ -2,6 +2,7 @@ import numpy as np
 from scipy import optimize
 import pandas as pd
 import os
+from sklearn.preprocessing import StandardScaler
 
 
 def mip_optimize(df_riders: pd.DataFrame, params: dict, outputpath: str = "output"):
@@ -10,16 +11,46 @@ def mip_optimize(df_riders: pd.DataFrame, params: dict, outputpath: str = "outpu
     max_riders = params["max_riders"]
 
     sizes = df_riders["price"].values
+
+    # rescaling values
+    scaler = StandardScaler()
+
+    cols = [f"{starting_stage}_potential", "popularity", "trend", "totalGrowth", "odds"]
+
+    df_riders[cols] = scaler.fit_transform(df_riders[cols].to_numpy())
+
     # applying weights to popularity and totalGrowth as these are historical values
     # while stage potential is based on the stage profile and rider fit
     # and trend is the wishdom of the crowd
     values = (
-        df_riders[f"{starting_stage}_potential"].values
-        + df_riders["popularity"].values * 0.8
+        df_riders[f"{starting_stage}_potential"].values * 0.2
+        + df_riders["popularity"].values * 0.5
         + df_riders["trend"].values
-        + df_riders["totalGrowth"].values * 0.8
+        + df_riders["totalGrowth"].values * 0.5
         + df_riders["odds"].values
     )
+
+    df_riders["combined_potential"] = values
+    df_riders["potential/DKK"] = df_riders["combined_potential"] / (
+        df_riders["price"] / 10**7
+    )
+    df_riders["team"] = df_riders["teams_history"].apply(
+        lambda x: x[x.find("'season': 2024") + 30 :][: x.find("'season': 2023")]
+    )
+    cols = [
+        "name",
+        "price",
+        "combined_potential",
+        f"{starting_stage}_potential",
+        "popularity",
+        "trend",
+        "totalGrowth",
+        "odds",
+        "team",
+        "potential/DKK",
+    ]
+
+    df_riders[cols].to_excel(os.path.join(outputpath, "riders_budget_selected.xlsx"))
 
     bounds = optimize.Bounds(0, 1)  # 0 <= x_i <= 1
     integrality = np.full_like(values, True)  # x_i are integers
@@ -35,15 +66,7 @@ def mip_optimize(df_riders: pd.DataFrame, params: dict, outputpath: str = "outpu
         c=-values, constraints=constraints, integrality=integrality, bounds=bounds
     )
 
-    df_riders["team"] = df_riders["teams_history"].apply(
-        lambda x: x[x.find("'season': 2024") + 30 :][: x.find("'season': 2023")]
-    )
-
     df_riders["selected"] = res.x.round().astype(int)
-    df_riders["combined_potential"] = values
-    df_riders["potential/DKK"] = df_riders["combined_potential"] / (
-        df_riders["price"] / 10**7
-    )
 
     print("Solved:", res.success)
 
