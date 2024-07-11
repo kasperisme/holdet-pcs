@@ -18,7 +18,8 @@ def main(starting_stage: int = 0, budget: int = 50000000):
 
 
 if __name__ == "__main__":
-    budget = 54224831
+    stage = 12
+    budget = 56917066
     maxtransfer = budget * 0.01
 
-    main(9, budget - maxtransfer)
+    main(stage, budget - maxtransfer)
